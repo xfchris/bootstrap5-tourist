@@ -15,14 +15,18 @@
   bottom: 0;
   left: 0;
   right: 0;
-  /*position: fixed;*/
-  position: absolute;
+  position: fixed;
+  /*position: absolute;*/
   box-sizing: content-box;
   z-index: 1110;
   background-color: #000;
   opacity: 0.8;
   -ms-filter: "alpha(opacity=90)";
   filter: alpha(opacity=90);
+}
+
+.popover[class*="tour-"].orphan .popover-arrow {
+  display: none;
 }
 
 .tour-backdrop-animation {
@@ -87,7 +91,7 @@
 }
 
 .popover[class*="tour-"].orphan {
-	position: fixed;
+	position: fixed !important;
 	margin-top: 0;
 }
 
