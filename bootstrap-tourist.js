@@ -8,6 +8,7 @@
  * and fixes. You can read about why this fork exists here:
  *
  * https://github.com/sorich87/bootstrap-tour/issues/713
+ * https://github.com/xfchris/bootstrap5-tourist
  *
  * The entire purpose of this fork is to start rewriting bootstrap-tour
  * into native ES6 instead of the original coffeescript, and to implement
@@ -1679,7 +1680,7 @@
         // Hides the background and highlight. Caller is responsible for ensuring step wants hidden
         // backdrop
         Tour.prototype._hideBackdrop = function(step) {
-            var step = step || null;
+            step = step || null;
 
             if (step) {
                 // No backdrop? No need for highlight
@@ -1708,7 +1709,7 @@
         // Shows the backdrop (backdrop + highlight elements if not orphan). Caller is responsible for ensuring step really wants a visible
         // backdrop
         Tour.prototype._showBackdrop = function(step) {
-            var step = step || null;
+            step = step || null;
 
             // Ensure we're always starting with a clean, hidden backdrop - this ensures any previous step.backdropOptions.animation.* functions
             // haven't messed with the classes
@@ -1761,7 +1762,7 @@
             var _this = this;
             var _stepElement = $(step.element);
 
-            var stepSubset = {
+            return {
                 element: _stepElement,
                 container: step.container,
                 autoscroll: step.autoscroll,
@@ -1778,8 +1779,6 @@
                 },
 
             };
-
-            return stepSubset;
         };
 
 
@@ -1866,18 +1865,19 @@
             }
         };
 
-        Tour.prototype._hideHighlightOverlay = function(step) {
+        Tour.prototype._hideHighlightOverlay = function(step, isOrphan = false) {
             // remove the highlight class
             $(".tour-highlight-element").removeClass('tour-highlight-element');
-
             if (typeof step.backdropOptions.animation.highlightHide == "function") {
                 // pass DOM element jq object to function. Function is completely responsible for positioning and showing.
                 // dupe the step to avoid function messing with original object.
                 step.backdropOptions.animation.highlightHide($(DOMID_HIGHLIGHT), this._createStepSubset(step));
+                if (isOrphan) {
+                    $(DOMID_HIGHLIGHT).css({ width: $(document).width(), height: $(document).height(), top: 0, left: 0, display: 'none' });
+                }
             } else {
                 // must be a CSS class
                 $(DOMID_HIGHLIGHT).addClass(step.backdropOptions.animation.highlightHide);
-                //$(DOMID_HIGHLIGHT).width(0).height(0).offset({ top: 0, left: 0 });
                 $(DOMID_HIGHLIGHT).one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function() {
                     // ensure we end with a clean div
                     $(DOMID_HIGHLIGHT).removeClass().addClass("tour-highlight");
@@ -1906,7 +1906,7 @@
                         // Orphan doesn't require highlight as no element. Is the highlight currently visible? (from the previous step)
                         if ($(DOMID_HIGHLIGHT).is(':visible')) {
                             // Need to hide it
-                            this._hideHighlightOverlay(step);
+                            this._hideHighlightOverlay(step, true);
                         } else {
                             // Highlight not visible, not required. Do nothing.
                         }
